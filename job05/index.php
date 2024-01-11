@@ -2,11 +2,7 @@
 require_once 'Product.php';
 
 $product_id = 7;
-$dbConn = new PDO(
-    "mysql:host=localhost;dbname=draft-shop",
-    "anais",
-    ""
-);
+$dbConn = Product::dbConnexion();
 
 $query = "SELECT * FROM product WHERE id = :product_id";
 $statement = $dbConn->prepare($query);
@@ -20,4 +16,7 @@ $createdAt = new DateTime($result['createdAt']);
 $updatedAt = new DateTime($result['updatedAt']);
 
 $product = new Product($result['id'], $result['name'], $photosUrl, $result['price'], $result['description'], $result['quantity'], $createdAt, $updatedAt, $result['category_id']);
-var_dump($product);
+
+$category = $product->getCategory();
+
+var_dump($category);
