@@ -12,9 +12,8 @@ class Product
     private ?DateTime $createdAt;
     private ?DateTime $updatedAt;
     private ?int $category_id;
-    private $dbConn;
 
-    public function __construct(int $id = null, string $name = null, object $photos = null, int $price = null, string $description = null, int $quantity = null, DateTime $createdAt = null, DateTime $updatedAt = null, int $category_id = null)
+    public function __construct(int $id = null, string $name = null, array $photos = null, int $price = null, string $description = null, int $quantity = null, DateTime $createdAt = null, DateTime $updatedAt = null, int $category_id = null)
     {
         $this->id = $id;
         $this->name = $name;
@@ -147,12 +146,4 @@ class Product
     //     $result = $statement->fetch(PDO::FETCH_ASSOC);
     //     return $result ? $result : [];
     // }
-
-
-    public function getCategory()
-    {
-        
-            return new Category($category['id'], $category['name'], $category['description'], $category['createdAt'], $category['updatedAt']);
-        
-    }
 }
