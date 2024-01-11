@@ -19,5 +19,5 @@ $photosUrl = json_decode($result['photos'], true);
 $createdAt = new DateTime($result['createdAt']);
 $updatedAt = new DateTime($result['updatedAt']);
 
-$product = new Product($result['id'], $result['name'], $photosUrl, $result['price'], $result['description'], $result['quantity'], $createdAt, $updatedAt);
+$product = new Product($result['id'], $result['name'], $photosUrl, $result['price'], $result['description'], $result['quantity'], $createdAt, $updatedAt, $result['category_id']);
 var_dump($product);
