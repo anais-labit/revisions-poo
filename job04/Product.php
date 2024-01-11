@@ -12,7 +12,6 @@ class Product
     private ?DateTime $createdAt;
     private ?DateTime $updatedAt;
     private ?int $category_id;
-    private $dbConn;
 
     public function __construct(int $id = null, string $name = null, array $photos = null, int $price = null, string $description = null, int $quantity = null, DateTime $createdAt = null, DateTime $updatedAt = null, int $category_id = null)
     {
@@ -126,25 +125,25 @@ class Product
         return $this;
     }
 
-    public function dbConnexion(): PDO
-    {
+    // public function dbConnexion(): PDO
+    // {
 
-        $this->dbConn = new PDO(
-            "mysql:host=localhost;dbname=draft-shop",
-            "anais",
-            ""
-        );
-        return $this->dbConn;
-    }
+    //     $this->dbConn = new PDO(
+    //         "mysql:host=localhost;dbname=draft-shop",
+    //         "anais",
+    //         ""
+    //     );
+    //     return $this->dbConn;
+    // }
 
-    public function getProductWithId(?int $product_id): array
-    {
-        $dbConn = $this->dbConnexion();
-        $query = "SELECT * FROM product WHERE id = :product_id";
-        $statement = $dbConn->prepare($query);
-        $statement->bindParam(':product_id', $product_id);
-        $statement->execute();
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
-        return $result ? $result : [];
-    }
+    // public function getProductWithId(?int $product_id): array
+    // {
+    //     $dbConn = $this->dbConnexion();
+    //     $query = "SELECT * FROM product WHERE id = :product_id";
+    //     $statement = $dbConn->prepare($query);
+    //     $statement->bindParam(':product_id', $product_id);
+    //     $statement->execute();
+    //     $result = $statement->fetch(PDO::FETCH_ASSOC);
+    //     return $result ? $result : [];
+    // }
 }
