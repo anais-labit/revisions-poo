@@ -12,7 +12,6 @@ class Product
     private ?DateTime $createdAt;
     private ?DateTime $updatedAt;
     private ?int $category_id;
-    // private $dbConn;
 
     public function __construct(int $id = null, string $name = null, array $photos = null, int $price = null, string $description = null, int $quantity = null, DateTime $createdAt = null, DateTime $updatedAt = null, int $category_id = null)
     {
@@ -180,14 +179,15 @@ class Product
         return false;
     }
 
-    public function findAll() : array {
+    public function findAll(): array
+    {
 
         $query = "SELECT * FROM product";
         $dbConn = $this->dbConnexion();
         $statement = $dbConn->prepare($query);
         $statement->execute();
         $results = $statement->fetchAll(PDO::FETCH_ASSOC);
-        
+
         $products = [];
 
         foreach ($results as $result) {
@@ -197,8 +197,34 @@ class Product
             $product = new Product($result['id'], $result['name'], $photosUrl, $result['price'], $result['description'], $result['quantity'], $createdAt, $updatedAt, $result['category_id']);
 
             $products[] = $product;
-
         }
         return $products;
+    }
+
+    public function create(): Product|bool
+    {
+        $query = "INSERT INTO product(name, photos, price, description, quantity, createdAt, updatedAt, category_id) VALUES (:name, :photos, :price, :description, :quantity, :createdAt, :updatedAt, :category_id) ";
+        $dbConn = $this->dbConnexion();
+        $statement = $dbConn->prepare($query);
+
+        $newProduct = $statement->execute([
+            ':name' => $this->name,
+            ':photos' => json_encode($this->photos),
+            ':price' => $this->price,
+            ':description' => $this->description,
+            ':quantity' => $this->quantity,
+            ':createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
+            ':updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+            ':category_id' => $this->category_id
+        ]);
+
+        if ($newProduct) {
+            $lastInsertId = $dbConn->lastInsertId();
+            $this->setId($lastInsertId);
+            return $this;
+        } else {
+            return false;
+        }
+
     }
 }
