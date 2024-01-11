@@ -187,8 +187,6 @@ class Product
         $statement = $dbConn->prepare($query);
         $statement->execute();
         $results = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-        var_dump($results);
         
         $products = [];
 
@@ -201,7 +199,6 @@ class Product
             $products[] = $product;
 
         }
-
         return $products;
     }
 }
