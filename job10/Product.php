@@ -203,7 +203,7 @@ class Product
 
     public function create(): Product|bool
     {
-        $query = "INSERT INTO product(name, photos, price, description, quantity, createdAt, updatedAt, category_id) VALUES (:name, :photos, :price, :description, :quantity, :createdAt, :updatedAt, :category_id) ";
+        $query = "INSERT INTO product(name, photos, price, description, quantity, createdAt, category_id) VALUES (:name, :photos, :price, :description, :quantity, :createdAt, :category_id) ";
         $dbConn = $this->dbConnexion();
         $statement = $dbConn->prepare($query);
 
@@ -214,7 +214,6 @@ class Product
             ':description' => $this->description,
             ':quantity' => $this->quantity,
             ':createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
-            ':updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
             ':category_id' => $this->category_id
         ]);
 
@@ -229,21 +228,35 @@ class Product
 
     public function update(): void
     {
+        $product_id = $this->id;
+        $productInfos = $this->findOneById($product_id);
 
-        var_dump($this->getPhotos());
-        var_dump($this->photos);
+        if (
+            $productInfos->name !== $this->name ||
+            $productInfos->photos !== $this->photos ||
+            $productInfos->price !== $this->price ||
+            $productInfos->description !== $this->description ||
+            $productInfos->quantity !== $this->quantity
+        ) {
 
-        if ($this->getPhotos() === $this->photos) {
-            var_dump('rr');
-        };
-        $photos = $this->getPhotos();
-        $price = $this->getPrice();
-        $description = $this->getDescription();
-        $quantity = $this->getQuantity();
-        $createdAt = $this->getCreatedAt();
-        $updatedAt = $this->getUpdatedAt();
-        $category_id = $this->getCategoryId();
+            $query = "UPDATE product SET name = :name, photos = :photos, price = :price, description = :description, quantity = :quantity, updatedAt = :updatedAt, category_id = :category_id WHERE id = :id";
 
-        var_dump($this);
+            $dbConn = $this->dbConnexion();
+            $statement = $dbConn->prepare($query);
+
+            $success = $statement->execute([
+                'id' => $product_id,
+                ':name' => ($this->name),
+                ':photos' => json_encode($this->photos),
+                ':price' => $this->price,
+                ':description' => $this->description,
+                ':quantity' => $this->quantity,
+                ':updatedAt' => (new DateTime())->format('Y-m-d H:i:s'),
+                ':category_id' => $this->category_id,
+            ]);
+            if ($success) {
+                echo 'Produit ajouté et mis à jour dans la foulée';
+            }
+        } 
     }
 }

@@ -1,17 +1,10 @@
 <?php
 require_once 'Product.php';
 
-$product = new Product(1, 'citrons', ['https://picsum.photos/200/300'], 10, 'citrons', 1, new DateTime(), new DateTime(), 2);
+$product = new Product(null, 't-shirt', ['https://picsum.photos/200/300'], 10, 't-shirt', 1, new DateTime(), null, 3);
 
-var_dump($product->create());
+$product->create();
 
-$product->setName('citrons')
-    ->setPhotos(['https://www.jaimefruitsetlegumes.ca/fr/aliments/citron/'])
-    ->setPrice(4)
-    ->setDescription('citrons')
-    ->setQuantity(1)
-    ->setCreatedAt(new DateTime())
-    ->setUpdatedAt(new DateTime())
-    ->setCategoryId(2);
+$product->setName('t-shirt 252')->setQuantity(24);
 
 $product->update();
