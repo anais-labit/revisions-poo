@@ -1,8 +1,8 @@
 <?php
 
-require_once "Product.php";
+require_once "AbstractProduct.php";
 
-class Electronic extends Product
+class Electronic extends AbstractProduct 
 
 {
     public function __construct(
@@ -61,23 +61,11 @@ class Electronic extends Product
         return $this;
     }
     
-
-    public static function dbConnexion(): PDO
-    {
-        $dbConn = new PDO(
-            "mysql:host=localhost;dbname=draft-shop",
-            "anais",
-            ""
-        );
-        return $dbConn;
-    }
-
-    public function findOneById(int $id): Electronic|bool
+    public static function findOneById(int $id): Electronic|bool
     {
 
         $query = "SELECT * FROM electronic INNER JOIN product ON electronic.product_id = product.id WHERE product_id = :id";
-        $dbConn = $this->dbConnexion();
-        $statement = $dbConn->prepare($query);
+        $statement = Database::dbConnexion()->prepare($query);
         $statement->bindValue(':id', $id);
         $statement->execute();
         $result = $statement->fetch(PDO::FETCH_ASSOC);
@@ -104,11 +92,10 @@ class Electronic extends Product
         }
     }
 
-    public function findAll(): array|bool
+    public static function findAll(): array|bool
     {
         $query = "SELECT * FROM electronic INNER JOIN product ON electronic.product_id = product.id";
-        $dbConn = $this->dbConnexion();
-        $statement = $dbConn->prepare($query);
+        $statement = Database::dbConnexion()->prepare($query);
         $statement->execute();
         $results = $statement->fetchAll(PDO::FETCH_ASSOC);
 
@@ -149,8 +136,7 @@ class Electronic extends Product
         $product_id = $newProduct->getId();
 
         $query = "INSERT INTO electronic (product_id, brand, waranty_fee) VALUES (:product_id, :brand, :waranty_fee)";
-        $dbConn = $this->dbConnexion();
-        $statement = $dbConn->prepare($query);
+        $statement = Database::dbConnexion()->prepare($query);
 
         $newelectronic = $statement->execute([
             'product_id' => $product_id,
@@ -166,18 +152,18 @@ class Electronic extends Product
 
     public function update(): Electronic|bool
     {
+        
         $product_id = $this->getId();
         $productInfos = $this->findOneById($product_id);
-
+        
         if (
             $productInfos->brand !== $this->brand ||
             $productInfos->waranty_fee !== $this->waranty_fee
-        ) {
-
-            $query = "UPDATE electronic SET brand = :brand, waranty_fee = :waranty_fee WHERE product_id = :product_id";
-
-            $dbConn = $this->dbConnexion();
-            $statement = $dbConn->prepare($query);
+            ) {
+                
+                $query = "UPDATE electronic SET brand = :brand, waranty_fee = :waranty_fee WHERE product_id = :product_id";
+                
+            $statement = Database::dbConnexion()->prepare($query);
 
             $success = $statement->execute([
                 'product_id' => $product_id,
