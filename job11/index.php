@@ -1,7 +1,7 @@
 <?php
 require_once 'Product.php';
 
-$product = new Product(null, 't-shirt', ['https://picsum.photos/200/300'], 10, 't-shirt', 1, new DateTime(), null, 3);
+$product = new Product(null, 't-shirt', ['https://picsum.photos/200/300'], 10, 't-shirt', 1, new DateTime(), null, 2);
 
 $product->create();
 
