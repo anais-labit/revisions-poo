@@ -1,6 +1,6 @@
 <?php
 
-abstract class Database
+class Database
 {
     public static function dbConnexion(): PDO
     {

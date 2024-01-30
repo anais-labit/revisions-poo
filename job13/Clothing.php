@@ -102,7 +102,7 @@ class Clothing extends AbstractProduct
         return $this;
     }
 
-    public static function findOneById(int $id):  Clothing|bool
+    public static function findOneById(int $id): Clothing|bool
     {
 
         $query = "SELECT * FROM clothing INNER JOIN product ON clothing.product_id = product.id WHERE product_id = :id";
@@ -201,37 +201,23 @@ class Clothing extends AbstractProduct
     {
         parent::update();
 
-        $product_id = $this->getId();
-        $productInfos = $this->findOneById($product_id);
+        $query = "UPDATE clothing SET size = :size, color = :color, type = :type, material_fee = :material_fee WHERE product_id = :product_id";
+        $statement = Database::dbConnexion()->prepare($query);
 
-        var_dump($productInfos);
-
-        if (
-            $productInfos->size !== $this->size ||
-            $productInfos->color !== $this->color ||
-            $productInfos->type !== $this->type ||
-            $productInfos->material_fee !== $this->material_fee
-        ) {
-
-            $query = "UPDATE clothing SET size = :size, color = :color, type = :type, material_fee = :material_fee WHERE product_id = :product_id";
-
-            $statement = Database::dbConnexion()->prepare($query);
-
-            $success = $statement->execute([
-                'product_id' => $product_id,
+        $updatedClothing = $statement->execute(
+            [
+                'product_id' => $this->getId(),
                 ':size' => $this->size,
                 ':color' => $this->color,
                 ':type' => $this->type,
                 ':material_fee' => $this->material_fee,
-            ]);
+            ]
+        );
 
-            if ($success) {
-                echo 'Vêtement ajouté et mis à jour dans la foulée';
-                return $this;
-            } else {
-                return false;
-            }
-
+        if ($updatedClothing) {
+            echo 'Vêtement ajouté et mis à jour dans la foulée';
+            return $this;
         }
+        return false;
     }
 }
