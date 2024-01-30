@@ -2,7 +2,7 @@
 
 require_once "AbstractProduct.php";
 
-class Electronic extends AbstractProduct 
+class Electronic extends AbstractProduct
 
 {
     public function __construct(
@@ -16,7 +16,7 @@ class Electronic extends AbstractProduct
         protected ?DateTime $updatedAt = null,
         protected ?int $id_category = null,
         protected ?string $brand = null,
-        protected ?int $waranty_fee = null
+        protected ?int $warranty_fee = null
     ) {
         parent::__construct($id, $name, $photos, $price, $description, $quantity, $createdAt, $updatedAt, $id_category);
     }
@@ -42,25 +42,25 @@ class Electronic extends AbstractProduct
     }
 
     /**
-     * Get the value of waranty_fee
+     * Get the value of warranty_fee
      */
-    public function getWaranty_fee()
+    public function getWarranty_fee()
     {
-        return $this->waranty_fee;
+        return $this->warranty_fee;
     }
 
     /**
-     * Set the value of waranty_fee
+     * Set the value of warranty_fee
      *
      * @return  self
      */
-    public function setWaranty_fee($waranty_fee)
+    public function setWarranty_fee($warranty_fee)
     {
-        $this->waranty_fee = $waranty_fee;
+        $this->warranty_fee = $warranty_fee;
 
         return $this;
     }
-    
+
     public static function findOneById(int $id): Electronic|bool
     {
 
@@ -84,7 +84,7 @@ class Electronic extends AbstractProduct
                 $updatedAt,
                 $result['category_id'],
                 $result['brand'],
-                $result['waranty_fee'],
+                $result['warranty_fee'],
             );
             return $electronic;
         } else {
@@ -116,7 +116,7 @@ class Electronic extends AbstractProduct
                 $updatedAt,
                 $result['category_id'],
                 $result['brand'],
-                $result['waranty_fee'],
+                $result['warranty_fee'],
             );
             $electronics[] = $electronic;
         }
@@ -130,54 +130,43 @@ class Electronic extends AbstractProduct
     {
         $newProduct = parent::create();
         if (!$newProduct) {
-            return $newProduct;
+            return false;
         }
 
         $product_id = $newProduct->getId();
 
-        $query = "INSERT INTO electronic (product_id, brand, waranty_fee) VALUES (:product_id, :brand, :waranty_fee)";
+        $query = "INSERT INTO electronic (product_id, brand, warranty_fee) VALUES (:product_id, :brand, :warranty_fee)";
         $statement = Database::dbConnexion()->prepare($query);
 
-        $newelectronic = $statement->execute([
+        $newElectronic = $statement->execute([
             'product_id' => $product_id,
             'brand' => $this->brand,
-            'waranty_fee' => $this->waranty_fee,
+            'warranty_fee' => $this->warranty_fee,
         ]);
 
-        if ($newelectronic) {
+        if ($newElectronic) {
             return $this;
         }
-        return $newelectronic;
+        return $newElectronic;
     }
 
-    public function update(): Electronic|bool
+    public function update(): Electronic
     {
-        
-        $product_id = $this->getId();
-        $productInfos = $this->findOneById($product_id);
-        
-        if (
-            $productInfos->brand !== $this->brand ||
-            $productInfos->waranty_fee !== $this->waranty_fee
-            ) {
-                
-                $query = "UPDATE electronic SET brand = :brand, waranty_fee = :waranty_fee WHERE product_id = :product_id";
-                
-            $statement = Database::dbConnexion()->prepare($query);
+        parent::update();
 
-            $success = $statement->execute([
-                'product_id' => $product_id,
-                ':brand' => $this->brand,
-                ':waranty_fee' => $this->waranty_fee,
-            ]);
+        $query = "UPDATE electronic SET brand = :brand, warranty_fee = :warranty_fee WHERE product_id = :product_id";
+        $statement = Database::dbConnexion()->prepare($query);
 
-            if ($success) {
-                echo 'Electronic ajouté et mis à jour dans la foulée';
-                return $this;
-            } else {
-                return false;
-            }
+        $updatedElectronic = $statement->execute([
+            'product_id' => $this->getId(),
+            'brand' => $this->brand,
+            'warranty_fee' => $this->warranty_fee,
+        ]);
+
+        if ($updatedElectronic) {
+            echo 'Electronic ajouté et mis à jour dans la foulée';
+            return $this;
         }
+        return false;
     }
-
 }

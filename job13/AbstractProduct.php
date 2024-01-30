@@ -164,7 +164,7 @@ abstract class AbstractProduct extends Database
         ]);
 
         if ($newProduct) {
-            $lastInsertId = $dbConn->lastInsertId();            
+            $lastInsertId = $dbConn->lastInsertId();
             $this->setId($lastInsertId);
             return $this;
         } else {
@@ -174,40 +174,29 @@ abstract class AbstractProduct extends Database
 
     public function update(): AbstractProduct|bool
     {
-        $product_id = $this->id;
-        $productInfos = $this->findOneById($product_id);
+        $query = "UPDATE product SET 
+        name = :name, photos = :photos, price = :price, description = :description, quantity = :quantity, updatedAt = :updatedAt, category_id = :category_id 
+        WHERE id = :id";
+        $statement = Database::dbConnexion()->prepare($query);
 
-        if (
-            $productInfos->name !== $this->name ||
-            $productInfos->photos !== $this->photos ||
-            $productInfos->price !== $this->price ||
-            $productInfos->description !== $this->description ||
-            $productInfos->quantity !== $this->quantity
-        ) {
+        $this->updatedAt = new DateTime();
 
-            $query = "UPDATE product SET name = :name, photos = :photos, price = :price, description = :description, quantity = :quantity, updatedAt = :updatedAt, category_id = :category_id WHERE id = :id";
+        $updatedProduct = $statement->execute([
+            ':id' => $this->id,
+            ':name' => $this->name,
+            ':photos' => json_encode($this->photos),
+            ':price' => $this->price,
+            ':description' => $this->description,
+            ':quantity' => $this->quantity,
+            ':updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+            ':category_id' => $this->category_id
+        ]);
 
-            $statement = Database::dbConnexion()->prepare($query);
+        var_dump($this);
 
-            $success = $statement->execute([
-                'id' => $product_id,
-                ':name' => ($this->name),
-                ':photos' => json_encode($this->photos),
-                ':price' => $this->price,
-                ':description' => $this->description,
-                ':quantity' => $this->quantity,
-                ':updatedAt' => (new DateTime())->format('Y-m-d H:i:s'),
-                ':category_id' => $this->category_id,
-            ]);
-
-            if ($success) {
-                echo 'Produit ajouté et mis à jour dans la foulée';
-                return $this;
-            } else {
-                return false;
-            }
+        if ($updatedProduct) {
+            return $this;
         }
+        return false;
     }
-
-
 }

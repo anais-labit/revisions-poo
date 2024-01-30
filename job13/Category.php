@@ -90,7 +90,7 @@ class Category
         $query = "SELECT * FROM product WHERE category_id = :category_id";
 
         $statement = $dbConn->prepare($query);
-        $statement->bindValue(':category_id', $this->id);
+        $statement->bindValue(':category_id', $this->id, PDO::PARAM_INT);
 
         $statement->execute();
         $results = $statement->fetchAll(PDO::FETCH_ASSOC);
